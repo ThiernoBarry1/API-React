@@ -9,14 +9,11 @@ class App extends Component {
     this.state = {
       books:[],
       newBookData:{
-        id:'',
         title:'',
         rating:''
       },
       newBookModal: false
     }
-    this.onChange = this.handleTitleChange.bind(this)
-   
   }
   componentDidMount(){
     Axios.get('http://localhost:3000/book').then((response)=>{
@@ -46,22 +43,7 @@ class App extends Component {
      newBookModal: true
    })
  }
- handleTitleChange(e){
-   const { newBookData } = this.state
-   newBookData.title = e.target.value;
-   console.log(newBookData);
-   this.setState({
-     newBookData:newBookData
-   })
- }
- handleRatingChange(e){
-  const { newBookData } = this.state
-  newBookData.rating = e.target.value;
-  console.log(newBookData);
-  this.setState({
-    newBookData:newBookData
-  })
-}
+ 
   render(){
     const { books } = this.state;
     return (
@@ -81,7 +63,15 @@ class App extends Component {
                         <InputGroup.Text id="inputGroup-sizing-sm" >Title</InputGroup.Text>
                       </InputGroup.Prepend>
                       <FormControl aria-label="title" defaultValue={this.state.newBookData.title}
-                                 onChange={(e)=>this.handleTitleChange.bind(this)} 
+                                 onChange={(e)=>
+                                               {
+                                                const { newBookData } = this.state
+                                                newBookData.title = e.target.value;
+                                                this.setState({
+                                                  newBookData:newBookData
+                                                })
+                                               }
+                                } 
                                  aria-describedby="inputGroup-sizing-sm" />
                 </InputGroup>
                 <InputGroup size="sm" className="mb-3">
@@ -89,7 +79,15 @@ class App extends Component {
                         <InputGroup.Text id="inputGroup-sizing-sm" >Rating</InputGroup.Text>
                       </InputGroup.Prepend>
                       <FormControl aria-label="title"  defaultValue={this.state.newBookData.rating} 
-                                 onChange={(e)=>this.handleRatingChange.bind(this)} 
+                                 onChange={(e)=>{
+                                                  const { newBookData } = this.state
+                                                  newBookData.rating = e.target.value;
+                                                  console.log(newBookData);
+                                                  this.setState({
+                                                    newBookData:newBookData
+                                                  })
+                                                }
+                                           } 
                                  aria-describedby="inputGroup-sizing-sm" />
                 </InputGroup>
                 </Modal.Body>
