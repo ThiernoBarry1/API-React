@@ -1,12 +1,22 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button, Table,Modal,Form } from 'react-bootstrap';
+import { Button, Table,Modal,InputGroup,FormControl } from 'react-bootstrap';
 import Axios from 'axios';
 
 class App extends Component {
-  state = {
-    books:[],
-    newBookModal: false
+  constructor(){
+    super();
+    this.state = {
+      books:[],
+      newBookData:{
+        id:'',
+        title:'',
+        rating:''
+      },
+      newBookModal: false
+    }
+    this.onChange = this.handleTitleChange.bind(this)
+   
   }
   componentDidMount(){
     Axios.get('http://localhost:3000/book').then((response)=>{
@@ -21,11 +31,37 @@ class App extends Component {
     newBookModal: false
   })
  }
+ createNewBook(){
+  Axios.post('http://localhost:3000/book',this.state.newBookData).then((response)=>{
+    console.log(response.data);
+    const {books} = this.state;
+    books.push(response.data);
+    this.setState({
+      books:books
+    })
+  })
+}
  toggleNewBook(){
    this.setState({
      newBookModal: true
    })
  }
+ handleTitleChange(e){
+   const { newBookData } = this.state
+   newBookData.title = e.target.value;
+   console.log(newBookData);
+   this.setState({
+     newBookData:newBookData
+   })
+ }
+ handleRatingChange(e){
+  const { newBookData } = this.state
+  newBookData.rating = e.target.value;
+  console.log(newBookData);
+  this.setState({
+    newBookData:newBookData
+  })
+}
   render(){
     const { books } = this.state;
     return (
@@ -35,20 +71,33 @@ class App extends Component {
                 AddBook
               </Button>
 
-              <Modal  show={this.state.newBookModal} onHide={this.handleClose} animation={false}>
+              <Modal  show={this.state.newBookModal} onHide={this.handleClose.bind(this)} animation={false}>
                 <Modal.Header closeButton>
                   <Modal.Title>Create new book</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                  Id: <Form.Control type="text" placeholder="Id of book" /> <br/>
-                  Title: <Form.Control type="text" placeholder="Title of book" /> <br/>
-                  Rating: <Form.Control type="text" placeholder="Rating of book" /> <br/>
+                  <InputGroup size="sm" className="mb-3">
+                      <InputGroup.Prepend>
+                        <InputGroup.Text id="inputGroup-sizing-sm" >Title</InputGroup.Text>
+                      </InputGroup.Prepend>
+                      <FormControl aria-label="title" defaultValue={this.state.newBookData.title}
+                                 onChange={(e)=>this.handleTitleChange.bind(this)} 
+                                 aria-describedby="inputGroup-sizing-sm" />
+                </InputGroup>
+                <InputGroup size="sm" className="mb-3">
+                      <InputGroup.Prepend>
+                        <InputGroup.Text id="inputGroup-sizing-sm" >Rating</InputGroup.Text>
+                      </InputGroup.Prepend>
+                      <FormControl aria-label="title"  defaultValue={this.state.newBookData.rating} 
+                                 onChange={(e)=>this.handleRatingChange.bind(this)} 
+                                 aria-describedby="inputGroup-sizing-sm" />
+                </InputGroup>
                 </Modal.Body>
                 <Modal.Footer>
-                  <Button variant="primary" onClick={this.toggleNewBook.bind(this)}>
+                  <Button variant="primary" onClick={this.createNewBook.bind(this)}>
                     Save 
                   </Button>
-                  <Button variant="secondary" onClick={this.toggleNewBook.bind(this)}>
+                  <Button variant="secondary" onClick={this.handleClose.bind(this)}>
                     Close
                   </Button>
                 </Modal.Footer>
@@ -75,7 +124,7 @@ class App extends Component {
                           </td>
                         </tr>
                     )
-                  })    
+                  })
                  }
                 </tbody>
               </Table>
