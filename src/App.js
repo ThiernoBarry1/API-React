@@ -47,6 +47,7 @@ class App extends Component {
     const {books} = this.state;
     books.push(response.data);
     this.setState({
+      newBookModal:!this.state.newBookModal,
       books:books
     })
   })
@@ -93,8 +94,10 @@ updateBook(){
     editBookModal: true
   })
  }
- deleteBook(){
-
+ deleteBook(id){
+   Axios.delete('http://localhost:3000/book/'+id).then((response)=>{
+    this._refreshBook();
+   })
  }
  handleCloseEditBook(){
   this.setState({
@@ -160,10 +163,7 @@ updateBook(){
               {/* 
                  La modification 
               */}  
-              <Button variant="primary" onClick={this.toggleEditBook.bind(this)} className="">
-                EditeBook
-              </Button>
-
+              
               <Modal  show={this.state.editBookModal} onHide={this.handleCloseEditBook.bind(this)} animation={false}>
                 <Modal.Header closeButton>
                   <Modal.Title>Edit book</Modal.Title>
@@ -232,7 +232,7 @@ updateBook(){
                           <td>{book.rating}</td>
                           <td>
                             <Button variant="success" className="mr-2" onClick={ this.editBook.bind(this, book.id, book.title, book.rating)}>Edit</Button>
-                            <Button variant="danger" onClick={this.deleteBook.bind(this)}>Delete</Button>
+                            <Button variant="danger" onClick={this.deleteBook.bind(this,book.id)}>Delete</Button>
                           </td>
                         </tr>
                     )
