@@ -1,3 +1,7 @@
+This project manage a book API. Using the CRUD and fake data created with json-server https://github.com/typicode/json-server.
+
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
